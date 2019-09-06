@@ -1,0 +1,107 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAysTuMQAzFlujeifjy1oztAy3lXlxciUw" async defer></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+          integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+          crossorigin="" />
+
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+            integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+            crossorigin=""></script>
+
+    <script src='https://unpkg.com/leaflet.gridlayer.googlemutant@latest/Leaflet.GoogleMutant.js'></script>
+
+    
+
+    <style>
+        #mapid {
+            height: 800px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div id="mapid"></div>
+
+
+    <script>
+
+        
+        var mymap = L.map('mapid').setView([39, 35.5], 7);
+
+        var roads = L.gridLayer.googleMutant({
+            type: 'roadmap'	// valid values are 'roadmap', 'satellite', 'terrain' and 'hybrid'
+        }).addTo(mymap);
+        /*
+        // Creating markers
+        var hydMarker = new L.Marker([40.056487, 31.380056]);
+        var vskpMarker = new L.Marker([40.210743, 35.383774]);
+        var vjwdMarker = new L.Marker([37.829133, 33.242745]);
+ 
+        // Creating latlng object
+        var latlngs = [
+            [40.056487, 31.380056],
+            [40.210743, 35.383774],
+            [37.829133, 33.242745]
+        ];
+        // Creating a polygon
+        var polygon = L.polygon(latlngs, { color: 'red' });
+        */
+
+        var clickCount = 0;
+        var poligon = [];
+
+        var popup = L.popup();
+
+        function onMapClick(e) {
+            /*
+            popup
+                .setLatLng(e.latlng)
+                .setContent(e.latlng.toString())
+                .openOn(mymap);
+            */
+            var value = e.latlng;
+
+            //console.log(value.lat + "-" + value.lng);
+
+            var marker = L.marker([value.lat, value.lng]).addTo(mymap);
+
+
+            if (clickCount != 3) {
+                poligon.push(value);
+                clickCount++;
+            }
+            else {
+                poligon.push(value);
+                var polygon = L.polygon(poligon, { color: 'red' }).addTo(mymap);
+                poligon = [];
+                clickCount = 0;
+            }
+
+        }
+
+
+
+        mymap.on('click', onMapClick);
+
+        mymap.on('contextmenu', function () {
+            popup.openOn(map);
+        });
+
+        
+    </script>
+</body>
+</html>
