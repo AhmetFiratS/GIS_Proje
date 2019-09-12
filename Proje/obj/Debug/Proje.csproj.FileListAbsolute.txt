@@ -66,8 +66,10 @@ C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\bin\System.Web.Webpages.Razor.x
 C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\bin\System.Web.Helpers.xml
 C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\bin\System.Web.Mvc.xml
 C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\obj\Debug\Proje.csprojAssemblyReference.cache
 C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\obj\Debug\Proje.csproj.CoreCompileInputs.cache
 C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\obj\Debug\Proje.csproj.CopyComplete
 C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\obj\Debug\Proje.dll
 C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\obj\Debug\Proje.pdb
+C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\bin\Newtonsoft.Json.dll
+C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\bin\Newtonsoft.Json.xml
+C:\Users\ahmet.suphesiz\source\repos\Proje\Proje\obj\Debug\Proje.csprojAssemblyReference.cache
