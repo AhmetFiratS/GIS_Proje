@@ -15,38 +15,6 @@ namespace Proje.Controllers
         // GET: Home
         public ActionResult Index()
         {
-            //List<Mahalle> districts;
-
-            //List<Kapı> doors;
-            /*
-            var data = new LeafletModel();
-
-            using (var db = new LeafletContext())
-            {
-
-                data.Kapılar = db.Kapılar
-                    .Select(i => new KapıModel()
-                    {
-                        Id = i.Id,
-                        KapıNo = i.KapıNo,
-                        Koordinat = i.KapıKoordinat
-                    }).ToList();
-
-                data.Mahalleler = db.Mahalleler
-                    .Select(i => new MahalleModel(){
-
-                        Id =i.Id,
-                        Ad = i.MahalleAdi,
-                        Koordinatlar =i.MahalleKoordinatlar
-
-                    }).ToList();
-
-                
-            }
-
-            return View(data);
-            */
-            
             return View();
         }
         /*
@@ -63,11 +31,11 @@ namespace Proje.Controllers
             return result;
         }
         */
-        
+
         public JsonResult SelectData()
         {
             var data = new LeafletModel();
-            
+
             using (var db = new LeafletContext())
             {
                 data.Kapılar = db.Kapılar.Select(i => new KapıModel()
@@ -77,7 +45,7 @@ namespace Proje.Controllers
                     Koordinat = i.KapıKoordinat
                 }).ToList();
 
-                data.Mahalleler = db.Mahalleler.Select(i=> new MahalleModel()
+                data.Mahalleler = db.Mahalleler.Select(i => new MahalleModel()
                 {
                     Id = i.Id,
                     Ad = i.MahalleAdi,
@@ -86,20 +54,8 @@ namespace Proje.Controllers
             }
 
             return Json(data, JsonRequestBehavior.AllowGet);
-            
-            /*
-            var kapı = new KapıModel() { Id = 0, KapıNo = 777, Koordinat = "39.257778150283364,29.212646484375004", MahalleId = 0 };
-            var kapı2 = new KapıModel() { Id = 1, KapıNo = 666, Koordinat = "39.357778150283364,29.512646484375004", MahalleId = 0 };
 
-            var mahalle = new MahalleModel() { Id = 0, Ad = "Abc", Koordinatlar = "39.791654835253425,37.49633789062501,39.38526381099774,39.97924804687501,38.16047628099622,39.29809570312501,38.659777730712534,37.22167968750001" };
 
-            data.Kapılar.Add(kapı);
-            data.Kapılar.Add(kapı2);
-
-            data.Mahalleler.Add(mahalle);
-
-            return Json(data, JsonRequestBehavior.AllowGet);
-            */
         }
 
         [HttpPost]
@@ -111,7 +67,9 @@ namespace Proje.Controllers
                 db.SaveChanges();
             }
 
-            return new HttpStatusCodeResult(200);
+            var result = new { Code = 1, Message = "Success" };
+
+            return Json(result);
         }
 
         [HttpPost]
@@ -124,7 +82,9 @@ namespace Proje.Controllers
                 var deneme = db.Mahalleler.ToList();
             }
 
-            return new HttpStatusCodeResult(200);
+            var result = new { Code = 1, Message = "Success" };
+
+            return Json(result);
         }
 
 

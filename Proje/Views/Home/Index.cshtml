@@ -139,7 +139,9 @@
 
                     console.log(value.lat + "-" + value.lng);
                     
-                    temp_poligon.push(e.latlng.lat.toString() + "," + e.latlng.lng.toString());
+                    //temp_poligon.push(e.latlng.lat.toString() + "," + e.latlng.lng.toString());
+
+                    temp_poligon.push(e.latlng);
                     
                 }
 
@@ -202,7 +204,7 @@
 
                         }
                         
-                        var polygon = L.polygon(pairCoordinates, { color: 'red' }).addTo(myMap).bindPopup("Mahalle Adı: " + mahalleler[i].Ad);
+                        var polygon = L.polygon(pairCoordinates, { color: 'red' }).addTo(myMap).bindPopup("<div>Mahalle Adı: " + mahalleler[i].Ad + "</div>"+"<div>Mahalle Id: " + mahalleler[i].Id + "</div>");
                     }
                     
                 },
@@ -227,20 +229,28 @@
                 url: '/Home/SaveDistrictData',
                 dataType: 'json',
                 data: data,
-                success: function () {
-                    alert("kaydedildi");
+                success: function (returnData) {
+                    myMap.closePopup();
+                    poligons.push(temp_poligon);
+
+                    var polygon = L.polygon(temp_poligon, { color: 'red' }).addTo(myMap);
+
+                    temp_poligon = [];
                 },
-                /*error: function (xhr, ajaxOptions, thrownError) {
+                error: function (xhr, ajaxOptions, thrownError) {
                     var errorMsg = 'Ajax request failed' + xhr.responseText;
                     alert(errorMsg);
-                }*/
+                }
+
             });
+            /*
             myMap.closePopup();
             poligons.push(temp_poligon);
             
             var polygon = L.polygon(temp_poligon, { color: 'red' }).addTo(districtLayer);
 
             temp_poligon = [];
+            */
         }
 
         function saveDoorData( ) {
@@ -257,13 +267,15 @@
                 url: '/Home/SaveDoorData',
                 dataType: 'json',
                 data: data,
-                success: function () {
-                    alert("kaydedildi");
+                success: function (returnData) {
+                    alert(returnData.Code);
                 },
+                
                 error: function (xhr, ajaxOptions, thrownError) {
                     var errorMsg = 'Ajax request failed' + xhr.responseText;
                     alert(errorMsg);
                 }
+                
             });
             
             //points.pop();
