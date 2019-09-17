@@ -17,6 +17,8 @@
           integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
           crossorigin="" />
 
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
     <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
             integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
@@ -26,280 +28,49 @@
 
     <script src="~/Scripts/jquery-3.4.1.js"></script>
 
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.css">
+    <script src="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.js"></script>
 
-    <style>
 
-        body{
-            margin : 0;
-        }
+    <link href="~/Style/style.css" rel="stylesheet" />
 
-        #map {
-            height: 800px;
-            width : 100%;
-        }
-        /*
-        #doorNo {
-            background-color: aqua;
-        }
-            */
-    </style>
 
 </head>
 <body>
 
     <div id="map"></div>
-
-    <script>
-        
-        var doorLayer = L.layerGroup();
-
-        var districtLayer = L.layerGroup();
-
-        var poligons = [];
-
-        var points = [];
-        
-        var temp_point;
-
-        var temp_poligon = [];
-        
-
-        var googleMaps = L.gridLayer.googleMutant({
-            type: 'roadmap'	// valid values are 'roadmap', 'satellite', 'terrain' and 'hybrid'
-        });
-
-        var myMap = L.map('map', {
-            center: [39, 35.5],
-            zoom: 7,
-            layers: [googleMaps]
-        });
-
-        var baseMap = {
-            "Map": googleMaps
-        };
-
-        var overlayMaps = {
-            "Kapılar": doorLayer,
-            "Mahalleler": districtLayer
-        };
-
-        L.control.layers(baseMap, overlayMaps).addTo(myMap);
-
-        var popup = L.popup();
-
-        // sayfa yüklendiğinde verileri çek
-        window.onload = getData();
-
-        myMap.on('click', onMapClick);
-
-        myMap.on('contextmenu', function (e) {
-
-            if (myMap.hasLayer(districtLayer) && myMap.hasLayer(doorLayer)) {
-
-                alert("Mahalleleri ya da Kapıları Seçiniz");
-            }
-            else {
-
-                if (myMap.hasLayer(districtLayer) && temp_poligon.length != 0) {
-                    popup.setLatLng(e.latlng)
-                        .setContent("<div>Mahalle adı: <input type=\"text\" id=\"districtName\"> "+
-                        "<button id=\"saveDistrict\" onclick=\"saveDistrictData()\">Mahalle Kaydet</button> " +
-                        "<button id = \"clear\" onclick=\"clearDistrictData()\" > Sil</button ></div>")
-                        .openOn(myMap);
-                }
-
-
-                if (myMap.hasLayer(doorLayer) && points.length != 0) {
-                    popup.setLatLng(e.latlng)
-                        .setContent("<div>Kapı no: <input type=\"text\" id=\"doorNo\"><br>" +
-                        "Mahalle Id: <input type=\"text\" id=\"districtId\"><br>"+
-                        "<button id=\"saveDoor\" onclick=\"saveDoorData()\">Kapı No Kaydet</button>" +
-                        " <button id = \"clear\" onclick=\"clearDoorData()\" > Sil</button ></div>")
-                        .openOn(myMap);
-                }
-            }
-
-
-        });
-
-        function onMapClick(e) {
-
-            if (myMap.hasLayer(districtLayer) && myMap.hasLayer(doorLayer)) {
-
-                alert("Mahalle Katmanını ya da Kapı Katmanını Seçiniz");
-            }
-
-            else {
-
-                if (myMap.hasLayer(districtLayer)) {
-
-                    var value = e.latlng;
-
-                    var marker = L.marker([value.lat, value.lng]).addTo(districtLayer);
-
-                    console.log(value.lat + "-" + value.lng);
+    <div id="queryAdres" class="btn btn-primary">Adres Sorgula</div>
+    <div class="row mt-4 w-100">
+        <div class="col-md-3 mx-auto">
+            <table id="districtTable" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Mahalle Adı</th>
+                    </tr>
+                </thead>
+                <tbody>
                     
-                    //temp_poligon.push(e.latlng.lat.toString() + "," + e.latlng.lng.toString());
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-3 mx-auto">
+            <table id="doorTable" class="table table-hover ">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Kapı No</th>
+                        <th scope="col">Mahalle Adı</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-                    temp_poligon.push(e.latlng);
-                    
-                }
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-                if (myMap.hasLayer(doorLayer)) {
+    <script src="~/Scripts/operations.js"></script>
 
-                    doorLayer.clearLayers();
-
-                    var value = e.latlng;
-
-                    var marker = L.marker([value.lat, value.lng]).addTo(doorLayer);
-
-                    console.log(value.lat + "-" + value.lng);
-
-                    temp_point = e.latlng.lat.toString() + "," + e.latlng.lng.toString();
-                    
-                }
-            }
-
-        }
-
-        function getData() {
-
-            $.ajax({
-
-                url: '/Home/SelectData',
-                type: 'get',
-                dataType: 'json',
-                success: function (data) {
-
-                    var kapılar = data.Kapılar;
-                    
-                    for (var i = 0; i < kapılar.length; i++) {
-                        
-                        var koordinat = L.latLng(parseFloat(kapılar[i].Koordinat.toString().split(',')[0]), parseFloat(kapılar[i].Koordinat.toString().split(',')[1]));
-                        
-                        points.push(koordinat);
-
-                        L.marker(koordinat).addTo(myMap).bindPopup('Kapı No: ' + kapılar[i].KapıNo);
-                        
-                    }
-
-                    var mahalleler = data.Mahalleler;
-
-                    for (var i = 0; i < mahalleler.length; i++) {
-
-                        var koordinatlar = mahalleler[i].Koordinatlar.toString().split(',');
-
-                        var pairCoordinates = [];
-
-                        for (var j = 0; j < koordinatlar.length - 1; j++) {
-
-                            if (j % 2 == 0){
-
-                                var x = parseFloat(koordinatlar[j]);
-                                var y = parseFloat(koordinatlar[j + 1]);
-                                
-                                pairCoordinates.push([x,y]);
-                                L.marker([x, y]).addTo(myMap);
-                            }
-
-                        }
-                        
-                        var polygon = L.polygon(pairCoordinates, { color: 'red' }).addTo(myMap).bindPopup("<div>Mahalle Adı: " + mahalleler[i].Ad + "</div>"+"<div>Mahalle Id: " + mahalleler[i].Id + "</div>");
-                    }
-                    
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    var errorMsg = 'Ajax request failed' + xhr.responseText;
-                    alert(errorMsg);
-                }
-            })
-
-        }
-        
-        function saveDistrictData() {
-
-            var data = {
-                Ad: $('#districtName').val(),
-                Koordinatlar: temp_poligon.toString()
-            };
-            
-            $.ajax({
-
-                type: 'post',
-                url: '/Home/SaveDistrictData',
-                dataType: 'json',
-                data: data,
-                success: function (returnData) {
-                    myMap.closePopup();
-                    poligons.push(temp_poligon);
-
-                    var polygon = L.polygon(temp_poligon, { color: 'red' }).addTo(myMap);
-
-                    temp_poligon = [];
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    var errorMsg = 'Ajax request failed' + xhr.responseText;
-                    alert(errorMsg);
-                }
-
-            });
-            /*
-            myMap.closePopup();
-            poligons.push(temp_poligon);
-            
-            var polygon = L.polygon(temp_poligon, { color: 'red' }).addTo(districtLayer);
-
-            temp_poligon = [];
-            */
-        }
-
-        function saveDoorData( ) {
-
-            var data = {
-                KapıNo: $('#doorNo').val(),
-                MahalleId: $('#districtId').val(),
-                koordinat: temp_point.toString()
-            };
-            
-            $.ajax({
-
-                type: 'post',
-                url: '/Home/SaveDoorData',
-                dataType: 'json',
-                data: data,
-                success: function (returnData) {
-                    alert(returnData.Code);
-                },
-                
-                error: function (xhr, ajaxOptions, thrownError) {
-                    var errorMsg = 'Ajax request failed' + xhr.responseText;
-                    alert(errorMsg);
-                }
-                
-            });
-            
-            //points.pop();
-            L.marker(temp_point).addTo(myMap);
-            
-        }
-
-        function clearDistrictData() {
-
-            poligon = [];
-            distrdistrictLayericts.clearLayers();
-            myMap.closePopup();
-
-        }
-
-        function clearDoorData() {
-
-            points = []
-            doorLayer.clearLayers();
-            myMap.closePopup();
-
-        }
-
-
-    </script>
 </body>
 </html>

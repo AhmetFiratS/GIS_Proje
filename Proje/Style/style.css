@@ -1,0 +1,24 @@
+﻿body {
+    margin: 0;
+    
+}
+
+#map {
+    height: 800px;
+    width: 100%;
+    cursor: pointer;
+}
+
+#queryAdres{
+
+    margin : 10px;
+}
+
+#districtTable {
+    
+    display: none;
+}
+
+#doorTable {
+    display: none;
+}

@@ -42,7 +42,8 @@ namespace Proje.Controllers
                 {
                     Id = i.Id,
                     KapıNo = i.KapıNo,
-                    Koordinat = i.KapıKoordinat
+                    Koordinat = i.KapıKoordinat,
+                    MahalleId = i.MahalleId
                 }).ToList();
 
                 data.Mahalleler = db.Mahalleler.Select(i => new MahalleModel()
