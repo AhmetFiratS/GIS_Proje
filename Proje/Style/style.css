@@ -6,7 +6,7 @@
 #map {
     height: 800px;
     width: 100%;
-    cursor: pointer;
+    cursor: default;
 }
 
 #queryAdres{
@@ -14,19 +14,11 @@
     margin : 10px;
 }
 
-/*
+
 #lists{
 
-    display: none !important;
-}
-*/
-
-#districtTable {
-    
-    display: none;
+    display: none ;
 }
 
-#doorTable {
-    display: none;
-}
+
     

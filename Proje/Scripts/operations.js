@@ -71,7 +71,7 @@ myMap.on('contextmenu', function (e) {
                 .openOn(myMap);
         }
     }
-    
+
 });
 
 function onMapClick(e) {
@@ -122,43 +122,18 @@ function onMapClick(e) {
 
 }
 
-function getData() {
-
-    kapıObjects = [];
+function getDistrictData() {
 
     mahalleObjects = [];
 
     $.ajax({
 
-        url: '/Home/SelectData',
+        url: '/Home/SelectDistrictData',
         type: 'get',
         dataType: 'json',
         success: function (data) {
 
-            var kapılar = data.Kapılar;
-
-            for (var i = 0; i < kapılar.length; i++) {
-
-                var koordinat = L.latLng(parseFloat(kapılar[i].Koordinat.toString().split(',')[0]), parseFloat(kapılar[i].Koordinat.toString().split(',')[1]));
-
-                points.push(koordinat);
-
-                L.marker(koordinat).addTo(doorLayer).bindPopup('Kapı No: ' + kapılar[i].KapıNo);
-
-                kapıObjects.push({
-
-                    Id: kapılar[i].Id,
-
-                    KapıNo: kapılar[i].KapıNo,
-
-                    MahalleId: kapılar[i].MahalleId,
-
-                    Koordinat: [koordinat.lat,koordinat.lng]
-                });
-
-            }
-
-            var mahalleler = data.Mahalleler;
+            var mahalleler = data;
 
             for (var i = 0; i < mahalleler.length; i++) {
 
@@ -192,7 +167,7 @@ function getData() {
                     Name: mahalleler[i].Ad,
 
                     Koordinatlar: pairCoordinates
-                    
+
                 });
 
             }
@@ -203,7 +178,56 @@ function getData() {
             alert(errorMsg);
         }
     })
+}
 
+function getDoorData() {
+
+    kapıObjects = [];
+
+    $.ajax({
+
+        url: '/Home/SelectDoorData',
+        type: 'get',
+        dataType: 'json',
+        success: function (data) {
+
+            var kapılar = data;
+
+            for (var i = 0; i < kapılar.length; i++) {
+
+                var koordinat = L.latLng(parseFloat(kapılar[i].Koordinat.toString().split(',')[0]), parseFloat(kapılar[i].Koordinat.toString().split(',')[1]));
+
+                points.push(koordinat);
+
+                L.marker(koordinat).addTo(doorLayer).bindPopup('<div>Kapı No: ' + kapılar[i].KapıNo + ' </div>'); //  </div><div>Mahalle Adı: ' + mahalleObjects.find(({ Id }) => Id == kapıObjects[i].MahalleId).Id +'</div>');
+
+                kapıObjects.push({
+
+                    Id: kapılar[i].Id,
+
+                    KapıNo: kapılar[i].KapıNo,
+
+                    MahalleId: kapılar[i].MahalleId,
+
+                    Koordinat: [koordinat.lat, koordinat.lng]
+                });
+
+            }
+        },
+
+        error: function (xhr, ajaxOptions, thrownError) {
+            var errorMsg = 'Ajax request failed' + xhr.responseText;
+            alert(errorMsg);
+        }
+    })
+}
+
+function getData() {
+
+    getDistrictData();
+
+    getDoorData();
+    
 }
 
 function saveDistrictData() {
@@ -228,7 +252,7 @@ function saveDistrictData() {
         data: data,
         success: function (returnData) {
 
-            getData();
+            getDistrictData();
 
             myMap.closePopup();
             poligons.push(temp_poligon);
@@ -238,7 +262,7 @@ function saveDistrictData() {
             all_poligons.push(temp_poligon);
 
             temp_poligon = [];
-            
+
         },
         error: function (xhr, ajaxOptions, thrownError) {
             var errorMsg = 'Ajax request failed' + xhr.responseText;
@@ -280,6 +304,8 @@ function saveDoorData() {
         data: data,
         success: function (returnData) {
 
+            getDoorData();
+
             L.marker(temp_point).addTo(doorLayer);
 
             myMap.closePopup();
@@ -293,7 +319,7 @@ function saveDoorData() {
         }
 
     });
-    
+
 }
 
 function clearDistrictData() {
@@ -325,14 +351,15 @@ function clearDoorData() {
 
 $("#queryAdres").on("click", function () {
 
+
     $("#districtTable tbody").empty();
 
     for (var i = 0; i < mahalleObjects.length; i++) {
 
         $("#districtTable tbody").append('<tr><th scope="row">' + (i + 1) + '</th>'
             + '<td>' + mahalleObjects[i].Name + '</td>'
-            + '<td><button id=\'btn' + (i + 1)+'\'class="btn btn-primary" onclick= "zoomToDistrict(' + i + ')">Mahalleyi Göster</button></td> </tr>');
-            
+            + '<td><button id=\'btn' + (i + 1) + '\'class="btn btn-primary" onclick= "zoomToDistrict(' + i + ')">Mahalleyi Göster</button></td> </tr>');
+
     }
 
     $("#doorTable tbody").empty();
@@ -341,18 +368,22 @@ $("#queryAdres").on("click", function () {
 
         $("#doorTable tbody").append('<tr><th scope="row">' + (i + 1) + '</th>'
             + '<td>' + kapıObjects[i].KapıNo + '</td>' + '<td>' + mahalleObjects.find(({ Id }) => Id == kapıObjects[i].MahalleId).Name + '</td>'
-            + '<td><button class = "btn btn-primary" onclick= "zoomToDoor(' + i + ')">Kapı Göster</button></td></tr>' );
+            + '<td><button class = "btn btn-primary" onclick= "zoomToDoor(' + i + ')">Kapı Göster</button></td></tr>');
 
     }
-    
+
+
+    $("#lists").toggle();
+
+    /*
     $("#districtTable").css("display", "block");
 
     $("#doorTable").css("display", "block");
-    
+    */
+
 });
 
-
-function zoomToDistrict (index) {
+function zoomToDistrict(index) {
 
     var polygon = L.polygon(mahalleObjects[index].Koordinatlar);
 

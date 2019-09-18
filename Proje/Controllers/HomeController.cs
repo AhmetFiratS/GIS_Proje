@@ -18,7 +18,6 @@ namespace Proje.Controllers
             return View();
         }
         
-
         public JsonResult SelectData()
         {
             var data = new LeafletModel();
@@ -85,6 +84,39 @@ namespace Proje.Controllers
             return Json(districtList);
         }
 
+        public ActionResult SelectDistrictData()
+        {
+            var districts = new List<MahalleModel>();
 
+            using (var db = new LeafletContext())
+            {
+                districts = db.Mahalleler.Select(i => new MahalleModel()
+                {
+                    Id = i.Id,
+                    Ad = i.MahalleAdi,
+                    Koordinatlar = i.MahalleKoordinatlar
+                }).ToList();
+            }
+
+            return Json(districts, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult SelectDoorData()
+        {
+            var doors = new List<KapıModel>();
+
+            using (var db = new LeafletContext())
+            {
+                doors = db.Kapılar.Select(i => new KapıModel()
+                {
+                    Id = i.Id,
+                    KapıNo = i.KapıNo,
+                    Koordinat = i.KapıKoordinat,
+                    MahalleId = i.MahalleId
+                }).ToList();
+            }
+
+            return Json(doors, JsonRequestBehavior.AllowGet);
+        }
     }
 }
