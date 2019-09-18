@@ -66,7 +66,6 @@ myMap.on('contextmenu', function (e) {
         if (myMap.hasLayer(doorLayer) && points.length != 0) {
             popup.setLatLng(e.latlng)
                 .setContent("<div>Kapı no: <input type=\"text\" id=\"doorNo\"><br>" +
-                    "Mahalle Id: <input type=\"text\" id=\"districtId\"><br>" +
                     "<button id=\"saveDoor\" onclick=\"saveDoorData()\">Kapı No Kaydet</button>" +
                     " <button id = \"clear\" onclick=\"clearDoorData()\" > Sil</button ></div>")
                 .openOn(myMap);
@@ -125,6 +124,10 @@ function onMapClick(e) {
 
 function getData() {
 
+    kapıObjects = [];
+
+    mahalleObjects = [];
+
     $.ajax({
 
         url: '/Home/SelectData',
@@ -176,7 +179,9 @@ function getData() {
 
                 }
 
-                var polygon = L.polygon(pairCoordinates, { color: 'red' }).addTo(districtLayer).bindPopup("<div>Mahalle Adı: " + mahalleler[i].Ad + "</div>" + "<div>Mahalle Id: " + mahalleler[i].Id + "</div>" +"<button onclick=\"deleteDistrictData("+mahalleler[i].Id+")\"> Kaydı Sil</button>");
+                var polygon = L.polygon(pairCoordinates, { color: 'red' })
+                    .addTo(districtLayer)
+                    .bindPopup("<div>Mahalle Adı: " + mahalleler[i].Ad + "</div>");
 
                 all_poligons.push(pairCoordinates);
 
@@ -186,7 +191,7 @@ function getData() {
 
                     Name: mahalleler[i].Ad,
 
-                    Koordinat: pairCoordinates
+                    Koordinatlar: pairCoordinates
                     
                 });
 
@@ -222,6 +227,9 @@ function saveDistrictData() {
         dataType: 'json',
         data: data,
         success: function (returnData) {
+
+            getData();
+
             myMap.closePopup();
             poligons.push(temp_poligon);
 
@@ -243,9 +251,24 @@ function saveDistrictData() {
 
 function saveDoorData() {
 
+    var mahalleId = 0;
+    // Intersect Control
+    for (var i = 0; i < mahalleObjects.length; i++) {
+
+        var dummyBoundry = L.latLngBounds(mahalleObjects[i].Koordinatlar);
+
+        if (dummyBoundry.contains(temp_point) == true) {
+
+            mahalleId = mahalleObjects[i].Id;
+        }
+    }
+
     var data = {
+
         KapıNo: $('#doorNo').val(),
-        MahalleId: $('#districtId').val(),
+
+        MahalleId: mahalleId,
+
         koordinat: temp_point.lat + "," + temp_point.lng
     };
 
@@ -300,17 +323,15 @@ function clearDoorData() {
 
 }
 
-function deleteDistrictData(Id) {
-    alert(Id);
-}
-
 $("#queryAdres").on("click", function () {
 
     $("#districtTable tbody").empty();
 
     for (var i = 0; i < mahalleObjects.length; i++) {
 
-        $("#districtTable tbody").append('<tr><th scope="row">' + (i + 1) + '</th>' + '<td>' + mahalleObjects[i].Name + '</td></tr>');
+        $("#districtTable tbody").append('<tr><th scope="row">' + (i + 1) + '</th>'
+            + '<td>' + mahalleObjects[i].Name + '</td>'
+            + '<td><button id=\'btn' + (i + 1)+'\'class="btn btn-primary" onclick= "zoomToDistrict(' + i + ')">Mahalleyi Göster</button></td> </tr>');
             
     }
 
@@ -318,7 +339,9 @@ $("#queryAdres").on("click", function () {
 
     for (var i = 0; i < kapıObjects.length; i++) {
 
-        $("#doorTable tbody").append('<tr><th scope="row">' + (i + 1) + '</th>' + '<td>' + kapıObjects[i].KapıNo + '</td>' + '<td>' + mahalleObjects.find(({ Id}) => Id == kapıObjects[i].MahalleId).Name + '</td></tr>');
+        $("#doorTable tbody").append('<tr><th scope="row">' + (i + 1) + '</th>'
+            + '<td>' + kapıObjects[i].KapıNo + '</td>' + '<td>' + mahalleObjects.find(({ Id }) => Id == kapıObjects[i].MahalleId).Name + '</td>'
+            + '<td><button class = "btn btn-primary" onclick= "zoomToDoor(' + i + ')">Kapı Göster</button></td></tr>' );
 
     }
     
@@ -329,9 +352,21 @@ $("#queryAdres").on("click", function () {
 });
 
 
+function zoomToDistrict (index) {
 
-$("#districtTable").on("click-row.bs.table", function (e, row, $element) {
-    var row_num = $element.index() + 1;
-    alert(row_num);
-});
+    var polygon = L.polygon(mahalleObjects[index].Koordinatlar);
+
+    myMap.fitBounds(polygon.getBounds());
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function zoomToDoor(index) {
+
+    myMap.setView(kapıObjects[index].Koordinat, 18);
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
 

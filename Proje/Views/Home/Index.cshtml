@@ -1,5 +1,4 @@
-﻿@using Proje.Models
-@model LeafletModel
+﻿
 @{
     Layout = null;
 }
@@ -40,35 +39,40 @@
 
     <div id="map"></div>
     <div id="queryAdres" class="btn btn-primary">Adres Sorgula</div>
-    <div class="row mt-4 w-100">
-        <div class="col-md-3 mx-auto">
-            <table id="districtTable" class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Mahalle Adı</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                </tbody>
-            </table>
-        </div>
-        <div class="col-md-3 mx-auto">
-            <table id="doorTable" class="table table-hover ">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Kapı No</th>
-                        <th scope="col">Mahalle Adı</th>
-                    </tr>
-                </thead>
-                <tbody>
+    
+        <div class="row mt-4 w-100">
+            <div class="col-md-6 mx-auto">
+                <table id="districtTable" class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Mahalle Adı</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6 mx-auto">
+                <table id="doorTable" class="table table-hover ">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Kapı No</th>
+                            <th scope="col">Mahalle Adı</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+
+    
 
     <script src="~/Scripts/operations.js"></script>
 

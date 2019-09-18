@@ -17,20 +17,7 @@ namespace Proje.Controllers
         {
             return View();
         }
-        /*
-        public string getData()
-        {
-            var data = new LeafletModel();
-
-            var kapı = new KapıModel() { Id = 0, KapıNo = 777, Koordinat = "39.257778150283364,29.212646484375004" };
-
-            data.Kapılar.Add(kapı);
-
-            var result = JsonConvert.SerializeObject(kapı);
-
-            return result;
-        }
-        */
+        
 
         public JsonResult SelectData()
         {
@@ -76,16 +63,26 @@ namespace Proje.Controllers
         [HttpPost]
         public ActionResult SaveDistrictData(MahalleModel data)
         {
+            var districtList = new List<MahalleModel>();
+
             using (var db = new LeafletContext())
             {
                 db.Mahalleler.Add(new Mahalle() { MahalleAdi = data.Ad, MahalleKoordinatlar = data.Koordinatlar });
                 db.SaveChanges();
-                var deneme = db.Mahalleler.ToList();
+
+                districtList = db.Mahalleler.Select(i => new MahalleModel
+                {
+                    Id = i.Id,
+                    Ad = i.MahalleAdi,
+                    Koordinatlar = i.MahalleKoordinatlar
+                    
+                }).ToList();
+                
             }
 
-            var result = new { Code = 1, Message = "Success" };
+            //var result = new { Code = 1, Message = "Success" };
 
-            return Json(result);
+            return Json(districtList);
         }
 
 

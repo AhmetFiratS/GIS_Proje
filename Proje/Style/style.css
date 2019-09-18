@@ -14,6 +14,13 @@
     margin : 10px;
 }
 
+/*
+#lists{
+
+    display: none !important;
+}
+*/
+
 #districtTable {
     
     display: none;
@@ -22,3 +29,4 @@
 #doorTable {
     display: none;
 }
+    
