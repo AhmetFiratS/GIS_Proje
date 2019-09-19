@@ -17,26 +17,26 @@ namespace Proje.Controllers
         {
             return View();
         }
-        
+
         public JsonResult SelectData()
         {
             var data = new LeafletModel();
 
             using (var db = new LeafletContext())
             {
-                data.Kapılar = db.Kapılar.Select(i => new KapıModel()
+                data.Doors = db.Doors.Select(i => new DoorModel()
                 {
                     Id = i.Id,
-                    KapıNo = i.KapıNo,
-                    Koordinat = i.KapıKoordinat,
-                    MahalleId = i.MahalleId
+                    DoorNo = i.DoorNo,
+                    Coordinate = i.Coordinate,
+                    DistrictId = i.DistrictId
                 }).ToList();
-
-                data.Mahalleler = db.Mahalleler.Select(i => new MahalleModel()
+                
+                data.Districts = db.Districts.Select(i => new DistrictModel()
                 {
                     Id = i.Id,
-                    Ad = i.MahalleAdi,
-                    Koordinatlar = i.MahalleKoordinatlar
+                    Name = i.Name,
+                    Coordinates = i.Coordinates
                 }).ToList();
             }
 
@@ -46,12 +46,14 @@ namespace Proje.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveDoorData(KapıModel data)
+        public ActionResult SaveDoorData(DoorModel data)
         {
             using (var db = new LeafletContext())
             {
-                db.Kapılar.Add(new Kapı() { KapıNo = data.KapıNo, KapıKoordinat = data.Koordinat, MahalleId = data.MahalleId });
+
+                db.Doors.Add(new Door() { DoorNo = data.DoorNo, Coordinate = data.Coordinate, DistrictId = data.DistrictId });
                 db.SaveChanges();
+                
             }
 
             var result = new { Code = 1, Message = "Success" };
@@ -60,23 +62,23 @@ namespace Proje.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveDistrictData(MahalleModel data)
+        public ActionResult SaveDistrictData(DistrictModel data)
         {
-            var districtList = new List<MahalleModel>();
+            var districtList = new List<DistrictModel>();
 
             using (var db = new LeafletContext())
             {
-                db.Mahalleler.Add(new Mahalle() { MahalleAdi = data.Ad, MahalleKoordinatlar = data.Koordinatlar });
+                db.Districts.Add(new District() { Name = data.Name, Coordinates = data.Coordinates });
                 db.SaveChanges();
 
-                districtList = db.Mahalleler.Select(i => new MahalleModel
+                districtList = db.Districts.Select(i => new DistrictModel
                 {
                     Id = i.Id,
-                    Ad = i.MahalleAdi,
-                    Koordinatlar = i.MahalleKoordinatlar
-                    
+                    Name = i.Name,
+                    Coordinates = i.Coordinates
+
                 }).ToList();
-                
+
             }
 
             //var result = new { Code = 1, Message = "Success" };
@@ -86,15 +88,15 @@ namespace Proje.Controllers
 
         public ActionResult SelectDistrictData()
         {
-            var districts = new List<MahalleModel>();
+            var districts = new List<DistrictModel>();
 
             using (var db = new LeafletContext())
             {
-                districts = db.Mahalleler.Select(i => new MahalleModel()
+                districts = db.Districts.Select(i => new DistrictModel()
                 {
                     Id = i.Id,
-                    Ad = i.MahalleAdi,
-                    Koordinatlar = i.MahalleKoordinatlar
+                    Name = i.Name,
+                    Coordinates = i.Coordinates
                 }).ToList();
             }
 
@@ -103,16 +105,17 @@ namespace Proje.Controllers
 
         public ActionResult SelectDoorData()
         {
-            var doors = new List<KapıModel>();
+            var doors = new List<DoorModel>();
 
             using (var db = new LeafletContext())
             {
-                doors = db.Kapılar.Select(i => new KapıModel()
+                doors = db.Doors.Select(i => new DoorModel()
                 {
                     Id = i.Id,
-                    KapıNo = i.KapıNo,
-                    Koordinat = i.KapıKoordinat,
-                    MahalleId = i.MahalleId
+                    DoorNo = i.DoorNo,
+                    Coordinate = i.Coordinate,
+                    DistrictId = i.DistrictId,
+                    DistrictName = i.District.Name
                 }).ToList();
             }
 

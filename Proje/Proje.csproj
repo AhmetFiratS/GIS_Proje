@@ -154,13 +154,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\KapıModel.cs" />
+    <Compile Include="Models\DoorModel.cs" />
     <Compile Include="Models\LeafletContext.cs" />
     <Compile Include="Models\LeafletInitializer.cs" />
-    <Compile Include="Models\Kapı.cs" />
+    <Compile Include="Models\Door.cs" />
     <Compile Include="Models\LeafletModel.cs" />
-    <Compile Include="Models\Mahalle.cs" />
-    <Compile Include="Models\MahalleModel.cs" />
+    <Compile Include="Models\District.cs" />
+    <Compile Include="Models\DistrictModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

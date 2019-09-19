@@ -13,7 +13,7 @@ namespace Proje.Models
             Database.SetInitializer(new LeafletInitializer());
         }
 
-        public DbSet<Mahalle> Mahalleler { get; set; }
-        public DbSet<Kapı> Kapılar { get; set; }
+        public DbSet<District> Districts { get; set; }
+        public DbSet<Door> Doors { get; set; }
     }
 }

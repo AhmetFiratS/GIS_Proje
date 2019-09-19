@@ -9,12 +9,12 @@ namespace Proje.Models
     {
         public LeafletModel()
         {
-            this.Kapılar = new List<KapıModel>();
+            this.Doors = new List<DoorModel>();
 
-            this.Mahalleler = new List<MahalleModel>();
+            this.Districts = new List<DistrictModel>();
         }
-        public List<KapıModel> Kapılar { get; set; }
-        public List<MahalleModel> Mahalleler { get; set; }
+        public List<DoorModel> Doors { get; set; }
+        public List<DistrictModel> Districts { get; set; }
         
     }
 }
