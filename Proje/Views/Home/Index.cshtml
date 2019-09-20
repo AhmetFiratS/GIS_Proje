@@ -52,40 +52,58 @@
         </label>
     </div>
 
+    <div class="container mt-5" id="lists">
 
-    <div class="container" id="lists">
+        <div class="row">
+            <div class="col-md-6">
 
-        <div class="row mt-4 w-100">
-            <div class="col-md-6 mx-auto">
-                <table id="districtTable" class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Mahalle Adı</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <div class="row">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Mahalle Adı</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <div class="list-group" id="districts">
+                    
+                </div>
+
+
             </div>
-            <div class="col-md-6 mx-auto">
-                <table id="doorTable" class="table table-hover ">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Kapı No</th>
-                            <th scope="col">Mahalle Adı</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+
+            <div class="col-md-6">
+
+                <div class="row">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Kapı No</th>
+                                <th scope="col">Mahalle Adı</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <div class="list-group" id="doors">
+
+                </div>
+
+
             </div>
         </div>
 
     </div>
 
-    <script src="~/Scripts/operations.js"></script>
+
+
+        <script src="~/Scripts/operations.js"></script>
 
 </body>
 </html>

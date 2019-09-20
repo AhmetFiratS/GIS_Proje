@@ -5,7 +5,7 @@ var districtLayer = L.layerGroup();
 
 var all_polygons = []
 
-var polygons = [];
+//var polygons = [];
 
 var points = [];
 
@@ -23,9 +23,11 @@ var googleMaps = L.gridLayer.googleMutant({
 });
 
 var myMap = L.map('map', {
+
     center: [39, 35.5],
     zoom: 7,
-    layers: [googleMaps, doorLayer, districtLayer]
+    layers: [googleMaps, doorLayer, districtLayer],
+    
 });
 
 var baseMap = {
@@ -44,136 +46,15 @@ var popup = L.popup();
 // sayfa yüklendiğinde verileri çek
 window.onload = getData();
 
-//myMap.on('click', onMapClick);
-/*
-myMap.on('contextmenu', function (e) {
+myMap.on('click', clickOnMap);
 
-    if (myMap.hasLayer(districtLayer) && myMap.hasLayer(doorLayer)) {
+myMap.on('contextmenu', contextMenu);
 
-        alert("Mahalleleri ya da Kapıları Seçiniz");
-    }
-    else {
+function getData() {
 
-        if (myMap.hasLayer(districtLayer) && temp_polygon.length != 0) {
-            popup.setLatLng(e.latlng)
-                .setContent("<div>Mahalle adı: <input type=\"text\" id=\"districtName\"> " +
-                    "<button id=\"saveDistrict\" onclick=\"saveDistrictData()\">Mahalle Kaydet</button> " +
-                    "<button id = \"clear\" onclick=\"clearDistrictData()\" > Sil</button ></div>")
-                .openOn(myMap);
-        }
+    getDistrictData();
 
-
-        if (myMap.hasLayer(doorLayer)) { //&& points.length != 0) {
-            popup.setLatLng(e.latlng)
-                .setContent("<div>Kapı no: <input type=\"text\" id=\"doorNo\"><br>" +
-                    "<button id=\"saveDoor\" onclick=\"saveDoorData()\">Kapı No Kaydet</button>" +
-                    " <button id = \"clear\" onclick=\"clearDoorData()\" > Sil</button ></div>")
-                .openOn(myMap);
-        }
-    }
-
-});
-*/
-function doorClick(e) {
-
-    doorLayer.clearLayers();
-    
-    for (var i = 0; i < points.length; i++) {
-        var marker = L.marker(points[i]).addTo(doorLayer);
-    }
-
-    var value = e.latlng;
-
-    //var point = L.point(value.lat, value.lng);
-
-    //doorLayer.panBy(point);
-
-    var marker = L.marker(value).addTo(doorLayer);
-
-    console.log(value.lat + "-" + value.lng);
-
-    temp_point = e.latlng;
-
-}
-
-function districtClick(e) {
-
-    var value = e.latlng;
-
-    var marker = L.marker([value.lat, value.lng]).addTo(districtLayer);
-
-    console.log(value.lat + "-" + value.lng);
-
-    //temp_polygon.push(e.latlng.lat.toString() + "," + e.latlng.lng.toString());
-
-    temp_polygon.push(e.latlng);
-
-}
-
-function doorContextMenu(e) {
-
-    popup.setLatLng(e.latlng)
-        .setContent("<div>Kapı no: <input type=\"text\" id=\"doorNo\"><br>" +
-            "<button id=\"saveDoor\" onclick=\"saveDoorData()\">Kapı No Kaydet</button>" +
-            " <button id = \"clear\" onclick=\"clearDoorData()\" > Sil</button ></div>")
-        .openOn(myMap);
-}
-
-function districtContextMenu(e) {
-
-    popup.setLatLng(e.latlng)
-        .setContent("<div>Mahalle adı: <input type=\"text\" id=\"districtName\"> " +
-            "<button id=\"saveDistrict\" onclick=\"saveDistrictData()\">Mahalle Kaydet</button> " +
-            "<button id = \"clear\" onclick=\"clearDistrictData()\" > Sil</button ></div>")
-        .openOn(myMap);
-
-}
-
-function onMapClick(e) {
-
-    if (myMap.hasLayer(districtLayer) && myMap.hasLayer(doorLayer)) {
-
-        alert("Mahalle Katmanını ya da Kapı Katmanını Seçiniz");
-    }
-
-    else {
-
-        if (myMap.hasLayer(districtLayer)) {
-
-            var value = e.latlng;
-
-            var marker = L.marker([value.lat, value.lng]).addTo(districtLayer);
-
-            console.log(value.lat + "-" + value.lng);
-
-            //temp_polygon.push(e.latlng.lat.toString() + "," + e.latlng.lng.toString());
-
-            temp_polygon.push(e.latlng);
-
-        }
-
-        if (myMap.hasLayer(doorLayer)) {
-
-            doorLayer.clearLayers();
-
-            for (var i = 0; i < points.length; i++) {
-                var marker = L.marker(points[i]).addTo(doorLayer);
-            }
-
-            var value = e.latlng;
-
-            //var point = L.point(value.lat, value.lng);
-
-            //doorLayer.panBy(point);
-
-            var marker = L.marker(value).addTo(doorLayer);
-
-            console.log(value.lat + "-" + value.lng);
-
-            temp_point = e.latlng;
-
-        }
-    }
+    getDoorData();
 
 }
 
@@ -204,7 +85,7 @@ function getDistrictData() {
                         var y = parseFloat(coordinates[j + 1]);
 
                         pairCoordinates.push([x, y]);
-                        //L.marker([x, y]).addTo(districtLayer);
+                        
                     }
 
                 }
@@ -276,22 +157,11 @@ function getDoorData() {
 
         error: function (xhr, ajaxOptions, thrownError) {
         
-
-            //alert(errorMessage.Message);
-            
             var errorMsg = 'Ajax request failed' + xhr.responseText;
             alert(errorMsg);
-            
+          
         }
     })
-}
-
-function getData() {
-    
-    getDistrictData();
-
-    getDoorData();
-    
 }
 
 function saveDistrictData() {
@@ -315,12 +185,15 @@ function saveDistrictData() {
         dataType: 'json',
         data: data,
         success: function (returnData) {
+            
+            //temp_polygon = [];
+
+            all_polygons = [];
 
             getDistrictData();
 
             myMap.closePopup();
-            polygons.push(temp_polygon);
-
+            
             var polygon = L.polygon(temp_polygon, { color: 'red' }).addTo(districtLayer);
 
             all_polygons.push(temp_polygon);
@@ -419,8 +292,7 @@ function clearDistrictData() {
 }
 
 function clearDoorData() {
-
-    //points = []
+    
     doorLayer.clearLayers();
     myMap.closePopup();
 
@@ -430,33 +302,6 @@ function clearDoorData() {
     }
 
 }
-
-$("#queryAdres").on("click", function () {
-
-
-    $("#districtTable tbody").empty();
-
-    for (var i = 0; i < districtObjects.length; i++) {
-
-        $("#districtTable tbody").append('<tr><th scope="row">' + (i + 1) + '</th>'
-            + '<td>' + districtObjects[i].Name + '</td>'
-            + '<td><button id=\'btn' + (i + 1) + '\'class="btn btn-primary" onclick= "zoomToDistrict(' + i + ')">Mahalleyi Göster</button></td> </tr>');
-
-    }
-
-    $("#doorTable tbody").empty();
-
-    for (var i = 0; i < doorObjects.length; i++) {
-
-        $("#doorTable tbody").append('<tr><th scope="row">' + (i + 1) + '</th>'
-            + '<td>' + doorObjects[i].DoorNo + '</td>' + '<td>' + doorObjects[i].DistrictName + '</td>'
-            + '<td><button class = "btn btn-primary" onclick= "zoomToDoor(' + i + ')">Kapı Göster</button></td></tr>');
-
-    }
-    
-    $("#lists").toggle();
-    
-});
 
 function zoomToDistrict(index) {
 
@@ -474,15 +319,114 @@ function zoomToDoor(index) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function clickOnMap(e) {
+
+    if ($("#addDistrict").parent().hasClass("active")) {
+
+        var value = e.latlng;
+
+        var marker = L.marker([value.lat, value.lng]).addTo(districtLayer);
+        
+        temp_polygon.push(e.latlng);
+    }
+
+    else if ($("#addDoor").parent().hasClass("active")) {
+
+        doorLayer.clearLayers();
+
+        for (var i = 0; i < points.length; i++) {
+            var marker = L.marker(points[i]).addTo(doorLayer);
+        }
+
+        var value = e.latlng;
+        
+        var marker = L.marker(value).addTo(doorLayer);
+
+        console.log(value.lat + "-" + value.lng);
+
+        temp_point = e.latlng;
+    }
+
+}
+
+function contextMenu(e) {
+
+    if ($("#addDistrict").parent().hasClass("active")) {
+
+        popup.setLatLng(e.latlng)
+            .setContent("<div>Mahalle adı: <input type=\"text\" id=\"districtName\"> " +
+                "<button id=\"saveDistrict\" onclick=\"saveDistrictData()\">Mahalle Kaydet</button> " +
+                "<button id = \"clear\" onclick=\"clearDistrictData()\" > Sil</button ></div>")
+            .openOn(myMap);
+    }
+    
+    else if ($("#addDoor").parent().hasClass("active")) {
+
+        popup.setLatLng(e.latlng)
+            .setContent("<div>Kapı no: <input type=\"text\" id=\"doorNo\"><br>" +
+                "<button id=\"saveDoor\" onclick=\"saveDoorData()\">Kapı No Kaydet</button>" +
+                " <button id = \"clear\" onclick=\"clearDoorData()\" > Sil</button ></div>")
+            .openOn(myMap);
+        
+    }
+    
+}
+
+function showDoors(index) {
+
+    $("#doors").empty();
+
+    var doors = [];
+
+    for (var i = 0; i < doorObjects.length; i++) {
+
+        if (districtObjects[index].Id == doorObjects[i].DistrictId) {
+            doors.push(doorObjects[i]);
+        }
+    }
+    
+    for (var i = 0; i < doors.length; i++) {
+
+        $("#doors").append('<li class="list-group-item list-group-item-action">'
+            + '<div class="row">'
+                + '<div class="col-2">' + (i + 1) + '</div>'
+                + '<div class="col-2">' + doors[i].DoorNo + '</div>'
+                + '<div class="col-3">' + doors[i].DistrictName + '</div>'
+                + '<div class="col-5"><button id=\'btn' + (i + 1) + '\'class="btn btn-primary" onclick= "zoomToDoor(' + i + ')">Kapıyı Göster</button></div>'
+            + '</div>'
+            + '</li>');
+    }
+}
+
+$("#queryAdres").on("click", function () {
+
+    $("#districts").empty();
+
+    $("#doors").empty();
+
+    for (var i = 0; i < districtObjects.length; i++) {
+
+        $("#districts").append('<li class="list-group-item list-group-item-action" onclick=\'showDoors(' + i + ')\'>'
+            + '<div class="row">'
+                + '<div class="col-2">' + (i + 1) + '</div>'
+                + '<div class="col-5">' + districtObjects[i].Name + '</div>'
+                + '<div class="col-5"><button id=\'btn' + (i + 1) + '\'class="btn btn-primary" onclick= "zoomToDistrict(' + i + ')">Mahalleyi Göster</button></div>'
+            + '</div>'
+            + '</li>')
+
+    }
+    
+    $("#lists").toggle();
+
+});
+
 $("#view").click(function () {
 
     $(this).parent().addClass('focus active');
 
-    $("#addDistrict").parent().attr('class','btn btn-success');
+    $("#addDistrict").parent().attr('class', 'btn btn-success');
 
     $("#addDoor").parent().attr('class', 'btn btn-success');
-
-    myMap.on('contextmenu', function (e) { });
 
 });
 
@@ -494,10 +438,6 @@ $("#addDistrict").click(function () {
 
     $("#addDoor").parent().attr('class', 'btn btn-success');
 
-    myMap.on('click', districtClick);
-
-    myMap.on('contextmenu', districtContextMenu);
-
 });
 
 $("#addDoor").click(function () {
@@ -508,11 +448,4 @@ $("#addDoor").click(function () {
 
     $("#addDistrict").parent().attr('class', 'btn btn-success');
 
-    myMap.on('click', doorClick);
-
-    myMap.on('contextmenu', doorContextMenu);
-
 });
-
-
-
