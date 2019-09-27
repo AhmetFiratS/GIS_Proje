@@ -369,7 +369,7 @@ function clickOnMap(e) {
 
 function contextMenu(e) {
 
-    if ($("#addDistrict").parent().hasClass("active") && temp_polygon.length != 0) {
+    if ($("#addDistrict").parent().hasClass("active") && temp_polygon.length >= 3) {
 
         popup.setLatLng(e.latlng)
             .setContent("<div>Mahalle adı: <input type=\"text\" id=\"districtName\"> " +
@@ -439,6 +439,12 @@ $("#queryAdres").on("click", function () {
 });
 
 $("#view").click(function () {
+
+    temp_polygon = [];
+
+    temp_point = null;
+
+    myMap.closePopup();
     
     $(this).parent().addClass('focus active');
 
@@ -454,6 +460,10 @@ $("#view").click(function () {
 
 $("#addDistrict").click(function () {
 
+    temp_polygon = [];
+
+    temp_point = null;
+
     $(this).parent().addClass('focus active');
 
     $("#view").parent().attr('class', 'btn btn-success');
@@ -465,6 +475,10 @@ $("#addDistrict").click(function () {
 });
 
 $("#addDoor").click(function () {
+
+    temp_polygon = [];
+
+    temp_point = null;
 
     $(this).parent().addClass('focus active');
 
@@ -533,6 +547,8 @@ function drawDoorsWithoutPopup() {
 $("#districtMenuButton").click(function () {
 
     $("#menu").empty();
+
+    
 
     for (var i = 0; i < districtObjects.length; i++) {
         
